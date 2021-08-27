@@ -33,6 +33,22 @@ namespace FightingSimulation
             return damage;
         }
 
+        float CalculateDamage(Monster attacker, Monster defender)
+        {
+            float damage = attacker.attack - defender.defence;
+            if (damage <= 0)
+            {
+                damage = 1;
+            }
+            return damage;
+        }
+
+        void Fight(ref Monster attacker, ref Monster defender)
+        {
+            float damageTaken = CalculateDamage(attacker, defender);
+            defender.health -= damageTaken;
+            Console.WriteLine(defender.name + " has taken " + damageTaken + " damage");
+        }
         public void Run()
         {   //Monster 1's Stats
             Monster monster1;
@@ -53,16 +69,8 @@ namespace FightingSimulation
             //Print Monster 2 Stats
             PrintStats(monster2);
 
-            //Monster 1 attacks monster 2
-            float damageTaken = CalculateDamage(monster1.attack, monster2.defence);
-            monster2.health -= damageTaken;
-            Console.WriteLine(monster2.name + " has taken " + damageTaken + " damage");
-
-            //Monster 2 attacks monster 1
-            damageTaken = CalculateDamage(monster2.attack, monster1.defence);
-            monster1.health -= damageTaken;
-            Console.WriteLine(monster1.name + " has taken " + damageTaken + " damage");
-
+            Fight(ref monster1, ref monster2);
+            Fight(ref monster2, ref monster1);
             Console.ReadKey();
             Console.Clear();
 
