@@ -55,7 +55,7 @@ namespace FightingSimulation
             knuckles.attack = 25.0f;
             knuckles.defence = 0.0f;
 
-        ResetCurrentMonster();
+            ResetCurrentMonster();
         }
 
 
@@ -80,8 +80,60 @@ namespace FightingSimulation
             End();
         }
 
+        float NumberInput(string currentNumberEntry)
+        {
+            bool invalidInput = true;
+            while (invalidInput == true)
+            {
+                Console.WriteLine("Please enter the " + currentNumberEntry + " number here.");
+                Console.Write(">");
+                string input = Console.ReadLine();
+                if (Single.TryParse(input, out float result))
+                {
+                    invalidInput = false;
+                    Console.Clear();
+                    return result;
 
-        void End()
+                }
+
+                else
+                {
+                    Console.WriteLine("Please input a valid number.");
+                    Console.Clear();
+                }
+            }
+            return 0;
+        }
+            
+        float[] CreateArray()
+        {
+            float firstNumber = NumberInput("first");
+            float secondNumber = NumberInput("second");
+            float thirdNumber = NumberInput("third");
+            float fourthNumber = NumberInput("fourth");
+            float fifthNumber = NumberInput("fifth");
+            float[] numbers = new float[5] { firstNumber, secondNumber, thirdNumber, fourthNumber, fifthNumber };
+            return numbers;
+        }
+        
+        void DisplayArray(float[] array)
+        {
+            float max = array[0];
+            float min = array[0];
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (array[i] > max)
+                    max = array[i];
+                if (array[i] < max)
+                    min = array[i];
+            }
+            
+            Console.WriteLine(max + " is the largest value");
+            Console.WriteLine(min + " is the smallest value");
+        }
+
+        
+    void End()
         {
             Console.WriteLine("Goodbye");
         }
@@ -163,7 +215,7 @@ namespace FightingSimulation
         {
             //Get the player choice
             int choice = GetInput("Simulation over. Play Again?", "Yes", "No");
-            
+
             //If the player cose to restart
             if (choice == 1)
             {
@@ -178,7 +230,7 @@ namespace FightingSimulation
             }
         }
 
-        
+
 
         void ResetCurrentMonster()
         {
@@ -208,7 +260,7 @@ namespace FightingSimulation
                     DisplayRestartMenu();
                     break;
 
-                    default:
+                default:
                     Console.WriteLine("Invalid Scene Index");
                     break;
             }
@@ -254,7 +306,7 @@ namespace FightingSimulation
 
             //Monster 2 attacks monster 1
             float damageTaken = Fight(currentMonster1, ref currentMonster2);
-            Console.WriteLine(currentMonster2.name + " has taken " + damageTaken +  " damage.");
+            Console.WriteLine(currentMonster2.name + " has taken " + damageTaken + " damage.");
 
             damageTaken = Fight(currentMonster2, ref currentMonster1);
             Console.WriteLine(currentMonster1.name + " has taken " + damageTaken + " damage.");
