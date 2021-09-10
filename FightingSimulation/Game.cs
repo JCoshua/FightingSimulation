@@ -24,6 +24,8 @@ namespace FightingSimulation
         Monster thwompus;
         Monster mompus;
         Monster knuckles;
+        Monster[] monsters;
+
 
         int currentScene = 0;
         int currentMonsterIndex = 0;
@@ -55,6 +57,7 @@ namespace FightingSimulation
             knuckles.attack = 25.0f;
             knuckles.defence = 0.0f;
 
+            monsters = new Monster[] { wompus, thwompus, mompus, knuckles };
             ResetCurrentMonster();
         }
 
@@ -80,59 +83,7 @@ namespace FightingSimulation
             End();
         }
 
-        float NumberInput(string currentNumberEntry)
-        {
-            bool invalidInput = true;
-            while (invalidInput == true)
-            {
-                Console.WriteLine("Please enter the " + currentNumberEntry + " number here.");
-                Console.Write(">");
-                string input = Console.ReadLine();
-                if (Single.TryParse(input, out float result))
-                {
-                    invalidInput = false;
-                    Console.Clear();
-                    return result;
-
-                }
-
-                else
-                {
-                    Console.WriteLine("Please input a valid number.");
-                    Console.Clear();
-                }
-            }
-            return 0;
-        }
-            
-        float[] CreateArray()
-        {
-            float firstNumber = NumberInput("first");
-            float secondNumber = NumberInput("second");
-            float thirdNumber = NumberInput("third");
-            float fourthNumber = NumberInput("fourth");
-            float fifthNumber = NumberInput("fifth");
-            float[] numbers = new float[5] { firstNumber, secondNumber, thirdNumber, fourthNumber, fifthNumber };
-            return numbers;
-        }
-        
-        void DisplayArray(float[] array)
-        {
-            float max = array[0];
-            float min = array[0];
-            for (int i = 0; i < array.Length; i++)
-            {
-                if (array[i] > max)
-                    max = array[i];
-                if (array[i] < max)
-                    min = array[i];
-            }
-            
-            Console.WriteLine(max + " is the largest value");
-            Console.WriteLine(min + " is the smallest value");
-        }
-
-        
+       
     void End()
         {
             Console.WriteLine("Goodbye");
@@ -231,13 +182,15 @@ namespace FightingSimulation
         }
 
 
-
+        /// <summary>
+        /// Resets the currentMonsterIndex tp the first two mpnsters in the array.
+        /// </summary>
         void ResetCurrentMonster()
         {
             currentMonsterIndex = 0;
-            currentMonster1 = GetMonster(currentMonsterIndex);
+            currentMonster1 = monsters[currentMonsterIndex];
             currentMonsterIndex++;
-            currentMonster2 = GetMonster(currentMonsterIndex);
+            currentMonster2 = monsters[currentMonsterIndex];
         }
 
         void UpdateCurrentScene()
@@ -266,34 +219,6 @@ namespace FightingSimulation
             }
         }
 
-        Monster GetMonster(int monsterIndex)
-        {
-            Monster monster;
-            monster.name = "None";
-            monster.attack = 0.0f;
-            monster.defence = 0.0f;
-            monster.health = 0.0f;
-
-            if (monsterIndex == 0)
-            {
-                monster = knuckles;
-            }
-            else if (monsterIndex == 1)
-            {
-                monster = mompus;
-            }
-            else if (monsterIndex == 2)
-            {
-                monster = wompus;
-            }
-            else if (monsterIndex == 3)
-            {
-                monster = thwompus;
-            }
-
-            return monster;
-        }
-
         /// <summary>
         /// Simulates one turn in combat
         /// </summary>
@@ -312,6 +237,19 @@ namespace FightingSimulation
             Console.WriteLine(currentMonster1.name + " has taken " + damageTaken + " damage.");
         }
 
+        bool TryEndSimulation()
+        {
+            bool simiulationOver = currentMonsterIndex >= monsters.Length;
+            if (simiulationOver)
+            {
+                Console.Clear();
+                PrintStats(currentMonster1);
+                PrintStats(currentMonster2);
+                Console.WriteLine("Simulation Complete");
+                currentScene = 2;
+            }
+            return simiulationOver;
+        }
         /// <summary>
         /// Updates the monsters after a battle is over.
         /// Ends if all fighters in the list have been used.
@@ -323,7 +261,11 @@ namespace FightingSimulation
             {
                 //...get the next monster
                 currentMonsterIndex++;
-                currentMonster1 = GetMonster(currentMonsterIndex);
+                if(TryEndSimulation())
+                {
+                    return;
+                }
+                currentMonster1 = monsters[currentMonsterIndex];
             }
 
             //If Monster 2 dies...
@@ -331,15 +273,13 @@ namespace FightingSimulation
             {
                 //...get the next monster
                 currentMonsterIndex++;
-                currentMonster2 = GetMonster(currentMonsterIndex);
+                if (TryEndSimulation())
+                {
+                    return;
+                }
+                    currentMonster2 = monsters[currentMonsterIndex];
             }
 
-            //If a monster is set to "None" and the last monster has been set.
-            if ((currentMonster1.name == "None" || currentMonster2.name == "None") && currentMonsterIndex >= 4)
-            {
-                Console.WriteLine("Simulation Over");
-                currentScene = 2;
-            }
         }
 
         void PrintStats (Monster monster)
